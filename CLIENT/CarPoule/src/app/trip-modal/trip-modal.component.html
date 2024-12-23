@@ -1,0 +1,78 @@
+<app-navbar-component></app-navbar-component>
+
+<body>
+    <div class="tripCard">
+        <mat-card class="buttonContainer">
+            <mat-card-title><p-button label="Back" icon="pi pi-arrow-left"
+                    (click)="goBack()"></p-button></mat-card-title>
+        </mat-card>
+    </div>
+
+    <div class="tripCard">
+        <mat-card class="cardContainer">
+            <div class="card-content">
+                <mat-card-title class="title">{{carpool?.departure}} - {{carpool?.arrival}}</mat-card-title>
+                <mat-card-subtitle class="subtitle">{{carpool?.date | date:
+                    'medium'}}</mat-card-subtitle>
+                <mat-card-content class="content">
+                    <p-divider></p-divider>
+                    <p class="description">{{carpool?.description}}</p>
+                    <div class="passengers">
+                        <p>Passengers : </p>
+                        <div class="card justify-content-center">
+                            <p-avatarGroup styleClass="mb-3">
+                                <p-avatar *ngFor="let passenger of carpool?.passengers" [image]="passenger.photo"
+                                    size="large" shape="circle"></p-avatar>
+                            </p-avatarGroup>
+                        </div>
+                    </div>
+                </mat-card-content>
+                <div *ngIf="!isDriver">
+                    <div *ngIf="!hasBookedSeat">
+                        <mat-card-actions class="actions">
+                            <p-button label="Take this trip" icon="pi pi-check"
+                                (click)="bookSeat(carpool._id)"></p-button>
+                        </mat-card-actions>
+                    </div>
+                </div>
+            </div>
+            <div class="card-map">
+                <ng-container *ngIf="departureCoords.length === 2">
+                    <app-map [departureCoords]="departureCoords" [arrivalCoords]="arrivalCoords"></app-map>
+                </ng-container>
+            </div>
+
+
+        </mat-card>
+    </div>
+
+    <div *ngIf="isDriver && isPending">
+        <div *ngFor="let passenger of pending">
+            <div *ngIf="passenger.id">
+                <div class="tripCard">
+                    <mat-card class="reservationContainer">
+                        <mat-card-title class="title">Reservation Alert</mat-card-title>
+                        <mat-card-content class="resContent">
+                            <p-divider></p-divider>
+                            <div style="display: flex; align-items: center; margin-bottom: 2vh;">
+                                <p-avatar [image]="passenger?.photo" size="large" shape="circle"></p-avatar>
+                                <p class="newRes">{{passenger?.name}} {{passenger?.firstname}}</p>
+                            </div>
+                        </mat-card-content>
+                        <mat-card-actions class="actions">
+                            <p-button class="resButton" [style]="{background: '#37873e', border: '#37873e'}"
+                                label="Accept Passenger" icon="pi pi-thumbs-up-fill"
+                                (click)="acceptPassenger(passenger.id, carpool._id)">
+                            </p-button>
+                            <p-button class="resButton" [style]="{background: '#ba261e', border: '#ba261e'}"
+                                label="Decline Passenger" icon="pi pi-thumbs-down-fill"
+                                (click)="rejectPassenger(passenger.id, carpool._id)">
+                            </p-button>
+                        </mat-card-actions>
+                    </mat-card>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
